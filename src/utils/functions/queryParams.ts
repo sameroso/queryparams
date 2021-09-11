@@ -38,10 +38,10 @@ export function queryParamsFactory<T extends Record<string, string>>(
      * @param value - the value the param to add
      * @returns query param Url string
      * @example
-     *  const { addParam } = queryParamsFactory('?key1=value1')
-     *  const urlWithAddedParam = addParamList([{ key:"key2", value:"value2"},{ key:"key3", value:"value3"}])
+     *  const { addParamList } = queryParamsFactory('?key1=value1')
+     *  const urlWithAddedParamList = addParamList([{ key:"key2", value:"value2"},{ key:"key3", value:"value3"}])
      *
-     *  console.log(urlWithAddedParam) => "key1=value1&key2=value2&key3=value3"
+     *  console.log(urlWithAddedParamList) => "key1=value1&key2=value2&key3=value3"
      *
      */
 
@@ -52,6 +52,18 @@ export function queryParamsFactory<T extends Record<string, string>>(
       return urlSearchParams.toString();
     },
 
+    /**
+     *
+     * @param key - Array of params wanted to remove
+     * @returns query param Url string
+     * @example
+     *  const { removeParamList } = queryParamsFactory('?key1=value1&key2=value2&key3=value3&key4=value4')
+     *  const urlWithRemovedParamList = removeParamList(["key2", "key3"])
+     *
+     *  console.log(urlWithRemovedParamList) => "key1=value1&key4=value4"
+     *
+     */
+
     removeParamList(paramsList: (keyof T)[]) {
       paramsList.forEach((key) => {
         urlSearchParams.delete(key as string);
@@ -59,15 +71,55 @@ export function queryParamsFactory<T extends Record<string, string>>(
       return urlSearchParams.toString();
     },
 
+    /**
+     *
+     * @param key - param wanted to remove
+     * @returns query param Url string
+     * @example
+     *  const { removeParam } = queryParamsFactory('?key1=value1&key2=value2&key3=value3&key4=value4')
+     *  const urlWithRemovedParam = removeParam("key2")
+     *
+     *  console.log(urlWithRemovedParam) => "key1=value1&key3=value3&key4=value4"
+     *
+     */
+
     removeParam(key: keyof T) {
       urlSearchParams.delete(key as string);
       return urlSearchParams.toString();
     },
 
+    /**
+     * @description
+     * if param exists it replaces the param, if it does not exists it adds param
+     *
+     * @param key - param key wanted to to add or replace
+     * @param value - param value wanted to add or
+     * @returns query param Url string
+     * @example
+     *  const { addOrReplaceParam } = queryParamsFactory('?key1=value1&key2=value2')
+     *  const urlWithaddedAndReplaceParam = removeParam([{key:"key2", value:"replacedValue2"},{key:"key3", value:"addedValue3"}])
+     *
+     *  console.log(urlWithRemovedParam) => "key1=value1&key2=replacedValue2&key3=addedValue3"
+     */
+
     addOrReplaceParam({ key, value }: SpecificParams<T>) {
       urlSearchParams.set(key as string, value);
       return urlSearchParams.toString();
     },
+
+      /**
+     * @description
+     * if param exists it replaces the param, if it does not exists it adds param
+     *
+     * @param key - param key wanted to to add or replace
+     * @param value - param value wanted to add or
+     * @returns query param Url string
+     * @example
+     *  const { addOrReplaceParam } = queryParamsFactory('?key1=value1&key2=value2')
+     *  const urlWithaddedAndReplaceParam = removeParam([{key:"key2", value:"replacedValue2"},{key:"key3", value:"addedValue3"}])
+     *
+     *  console.log(urlWithRemovedParam) => "key1=value1&key2=replacedValue2&key3=addedValue3"
+     */
 
     addOrReplaceParamList(paramsList: SpecificParams<T>[]) {
       paramsList.forEach(({ key, value }) => {

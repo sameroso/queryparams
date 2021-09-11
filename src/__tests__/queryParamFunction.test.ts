@@ -16,7 +16,7 @@ describe("Testing queryParamsFactory functionalities", () => {
   });
 
   test("addOrReplaceParam replace param when there is an existing param in the Url", () => {
-    const queryParamUrlWithReplacedParam = queryParamsFactory<{
+    const queryParamUrlWithReplacedParamList = queryParamsFactory<{
       testKey1: string;
       testKey2: string;
     }>("?testKey1=testValue1&testKey2=testValue2").addOrReplaceParam({
@@ -24,13 +24,13 @@ describe("Testing queryParamsFactory functionalities", () => {
       value: "replacedValue1+",
     });
 
-    expect(queryParamUrlWithReplacedParam).toBe(
+    expect(queryParamUrlWithReplacedParamList).toBe(
       "testKey1=replacedValue1%2B&testKey2=testValue2"
     );
   });
 
   test("add or replace param list when there is existing params in the Url", () => {
-    const queryParamUrlWithReplacedParam = queryParamsFactory<{
+    const queryParamUrlWithReplacedParamList = queryParamsFactory<{
       testKey1: string;
       testKey2: string;
     }>("?testKey1=testValue1&testKey2=testValue2").addOrReplaceParamList([
@@ -44,7 +44,7 @@ describe("Testing queryParamsFactory functionalities", () => {
       },
     ]);
 
-    expect(queryParamUrlWithReplacedParam).toBe(
+    expect(queryParamUrlWithReplacedParamList).toBe(
       "testKey1=replacedValue1&testKey2=replacedValue2"
     );
   });
