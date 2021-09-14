@@ -40,67 +40,78 @@ describe("Testing queryParamsFactory functionalities", () => {
   });
 
   test(`remove param`, () => {
-    const queryParamUrlWithRemovedParam = urlSearchParamsFactory<{
+    const { removeParam } = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3: string;
-    }>(
-      "?testKey1=testValue1&testKey2=testValue2&testKey3=testValue3"
-    ).removeParam("testKey2");
+    }>("?testKey1=testValue1&testKey2=testValue2&testKey3=testValue3");
 
-    expect(queryParamUrlWithRemovedParam).toBe(
+    const urlSearchParamsWithRemovedParams = removeParam("testKey2");
+
+    expect(urlSearchParamsWithRemovedParams).toBe(
       "testKey1=testValue1&testKey3=testValue3"
     );
   });
 
   test(`remove param List`, () => {
-    const queryParamUrlWithRemovedParamList = urlSearchParamsFactory<{
+    const { removeParamList } = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3: string;
       testKey4: string;
     }>(
       "?testKey1=testValue1&testKey2=testValue2&testKey3=testValue3&testKey4=testValue4"
-    ).removeParamList(["testKey2", "testKey3"]);
+    );
 
-    expect(queryParamUrlWithRemovedParamList).toBe(
+    const urlSearchParamsWithRemovedParamList = removeParamList([
+      "testKey2",
+      "testKey3",
+    ]);
+
+    expect(urlSearchParamsWithRemovedParamList).toBe(
       "testKey1=testValue1&testKey4=testValue4"
     );
   });
 
   test("addOrReplaceParam adds param when there is no param in the url", () => {
-    const queryParamUrlWithParamAdded = urlSearchParamsFactory<{
+    const { addOrReplaceParam } = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
-    }>("?testKey1=testValue1").addOrReplaceParam({
+    }>("?testKey1=testValue1");
+
+    const urlSearchParamsWithParamAdded = addOrReplaceParam({
       key: "testKey2",
       value: "testValue2&",
     });
 
-    expect(queryParamUrlWithParamAdded).toBe(
+    expect(urlSearchParamsWithParamAdded).toBe(
       "testKey1=testValue1&testKey2=testValue2%26"
     );
   });
 
   test("addOrReplaceParam replace param when there is an existing param in the Url", () => {
-    const queryParamUrlWithReplacedParam = urlSearchParamsFactory<{
+    const { addOrReplaceParam } = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
-    }>("?testKey1=testValue1&testKey2=testValue2").addOrReplaceParam({
+    }>("?testKey1=testValue1&testKey2=testValue2");
+
+    const urlSearchParamsWithReplacedParam = addOrReplaceParam({
       key: "testKey1",
       value: "replacedValue1+",
     });
 
-    expect(queryParamUrlWithReplacedParam).toBe(
+    expect(urlSearchParamsWithReplacedParam).toBe(
       "testKey1=replacedValue1%2B&testKey2=testValue2"
     );
   });
 
   test("add or replace param list when there is existing params in the Url", () => {
-    const queryParamUrlWithReplacedParamList = urlSearchParamsFactory<{
+    const { addOrReplaceParamList } = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
-    }>("?testKey1=testValue1&testKey2=testValue2").addOrReplaceParamList([
+    }>("?testKey1=testValue1&testKey2=testValue2");
+
+    const urlSearchParamsWithReplacedParamList = addOrReplaceParamList([
       {
         key: "testKey1",
         value: "replacedValue1",
@@ -111,7 +122,7 @@ describe("Testing queryParamsFactory functionalities", () => {
       },
     ]);
 
-    expect(queryParamUrlWithReplacedParamList).toBe(
+    expect(urlSearchParamsWithReplacedParamList).toBe(
       "testKey1=replacedValue1&testKey2=replacedValue2"
     );
   });
