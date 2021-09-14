@@ -1,25 +1,29 @@
-import { queryParamsFactory } from "../utils/functions/queryParams";
+import { urlSearchParamsFactory } from "../utils/functions/queryParams";
 
 describe("Testing queryParamsFactory functionalities", () => {
   test(`add param`, () => {
-    const queryParamUrlWithAddedParam = queryParamsFactory<{
+    const { addParam } = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
-    }>("?testKey1=testValue1&testKey2=testValue2").addParam({
+    }>("?testKey1=testValue1&testKey2=testValue2");
+
+    const urlSearchParamsWithAddedParam = addParam({
       key: "testKey3",
       value: "addedValue3",
     });
 
-    expect(queryParamUrlWithAddedParam).toBe(
+    expect(urlSearchParamsWithAddedParam).toBe(
       "testKey1=testValue1&testKey2=testValue2&testKey3=addedValue3"
     );
   });
 
   test(`add param List`, () => {
-    const queryParamUrlWithAddedParamList = queryParamsFactory<{
+    const { addParamList } = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
-    }>("?testKey1=testValue1&testKey2=testValue2").addParamList([
+    }>("?testKey1=testValue1&testKey2=testValue2");
+
+    const urlSearchParamsWithAddedParamList = addParamList([
       {
         key: "testKey3",
         value: "addedValue3",
@@ -30,13 +34,13 @@ describe("Testing queryParamsFactory functionalities", () => {
       },
     ]);
 
-    expect(queryParamUrlWithAddedParamList).toBe(
+    expect(urlSearchParamsWithAddedParamList).toBe(
       "testKey1=testValue1&testKey2=testValue2&testKey3=addedValue3&testKey4=addedValue4"
     );
   });
 
   test(`remove param`, () => {
-    const queryParamUrlWithRemovedParam = queryParamsFactory<{
+    const queryParamUrlWithRemovedParam = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3: string;
@@ -50,7 +54,7 @@ describe("Testing queryParamsFactory functionalities", () => {
   });
 
   test(`remove param List`, () => {
-    const queryParamUrlWithRemovedParamList = queryParamsFactory<{
+    const queryParamUrlWithRemovedParamList = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3: string;
@@ -65,7 +69,7 @@ describe("Testing queryParamsFactory functionalities", () => {
   });
 
   test("addOrReplaceParam adds param when there is no param in the url", () => {
-    const queryParamUrlWithParamAdded = queryParamsFactory<{
+    const queryParamUrlWithParamAdded = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
     }>("?testKey1=testValue1").addOrReplaceParam({
@@ -79,7 +83,7 @@ describe("Testing queryParamsFactory functionalities", () => {
   });
 
   test("addOrReplaceParam replace param when there is an existing param in the Url", () => {
-    const queryParamUrlWithReplacedParam = queryParamsFactory<{
+    const queryParamUrlWithReplacedParam = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
     }>("?testKey1=testValue1&testKey2=testValue2").addOrReplaceParam({
@@ -93,7 +97,7 @@ describe("Testing queryParamsFactory functionalities", () => {
   });
 
   test("add or replace param list when there is existing params in the Url", () => {
-    const queryParamUrlWithReplacedParamList = queryParamsFactory<{
+    const queryParamUrlWithReplacedParamList = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
     }>("?testKey1=testValue1&testKey2=testValue2").addOrReplaceParamList([
@@ -114,7 +118,7 @@ describe("Testing queryParamsFactory functionalities", () => {
 
   test(`add or replace param list when there is existing 
   params in the Url and add more params when it does not exist`, () => {
-    const queryParamUrlWithReplacedParamList = queryParamsFactory<{
+    const queryParamUrlWithReplacedParamList = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3?: string;
@@ -144,7 +148,7 @@ describe("Testing queryParamsFactory functionalities", () => {
   });
 
   test(`get param`, () => {
-    const param = queryParamsFactory<{
+    const param = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3: string;
@@ -156,7 +160,7 @@ describe("Testing queryParamsFactory functionalities", () => {
   });
 
   test(`get param list`, () => {
-    const paramList = queryParamsFactory<{
+    const paramList = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3: string;
@@ -170,14 +174,29 @@ describe("Testing queryParamsFactory functionalities", () => {
     });
   });
 
+  test(`get param list with empty string returns null on param keys`, () => {
+    const paramList = urlSearchParamsFactory<{
+      testKey1: string;
+      testKey2: string;
+      testKey3: string;
+    }>("").getParamList(["testKey2", "testKey3"]);
+
+    expect(paramList).toEqual({
+      testKey2: null,
+      testKey3: null,
+    });
+  });
+
   test(`get all params`, () => {
-    const paramList = queryParamsFactory<{
+    const paramList = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3: string;
     }>(
       "?testKey1=testValue1&testKey2=testValue2%26&testKey3=testValue3"
     ).getAllParams();
+
+    console.log(paramList.testKey1);
 
     expect(paramList).toEqual({
       testKey1: "testValue1",
@@ -186,14 +205,20 @@ describe("Testing queryParamsFactory functionalities", () => {
     });
   });
 
+  test(`get all params with empty string return empty object`, () => {
+    const paramList = urlSearchParamsFactory("").getAllParams();
+
+    expect(paramList).toEqual({});
+  });
+
   test(`get Query param Url`, () => {
-    const queryParamsUrl = queryParamsFactory<{
+    const queryParamsUrl = urlSearchParamsFactory<{
       testKey1: string;
       testKey2: string;
       testKey3: string;
     }>(
       "?testKey1=testValue1&testKey2=testValue2%26&testKey3=testValue3"
-    ).getQueryParamUrl();
+    ).getUrlSearchParams();
 
     expect(queryParamsUrl).toEqual(
       "testKey1=testValue1&testKey2=testValue2%26&testKey3=testValue3"
@@ -202,7 +227,7 @@ describe("Testing queryParamsFactory functionalities", () => {
 
   test(`compose`, () => {
     const { compose, addOrReplaceParamList, removeParam, addParamList } =
-      queryParamsFactory<{
+      urlSearchParamsFactory<{
         testKey1: string;
         testKey2: string;
         testKey3: string;
